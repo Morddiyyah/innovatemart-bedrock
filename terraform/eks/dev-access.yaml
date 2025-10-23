@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: dev-read-only
+  namespace: default
+rules:
+- apiGroups: ["", "extensions", "apps", "batch"]
+  resources: ["pods", "pods/log", "deployments", "replicasets", "services", "ingresses", "configmaps", "secrets", "events", "horizontalpodautoscalers", "cronjobs", "jobs"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dev-read-only-binding
+  namespace: default
+subjects:
+- kind: Group
+  name: view-only-developers # This MUST match the group name in aws-auth ConfigMap
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: dev-read-only
+  apiGroup: rbac.authorization.k8s.io
