@@ -237,7 +237,7 @@ resource "aws_eks_node_group" "innovatemart_node_group" {
 resource "aws_db_instance" "orders_db" {
   allocated_storage    = 20
   engine               = "postgres"
-  engine_version       = "15.5" # Choose an appropriate version
+  engine_version       = "16.4" # Choose an appropriate version
   instance_class       = "db.t3.micro" # Or a larger instance type
   db_name              = "ordersdb"
   username             = "ordersuser"
@@ -260,7 +260,7 @@ resource "aws_db_instance" "orders_db" {
 resource "aws_db_instance" "catalog_db" {
   allocated_storage    = 20
   engine               = "mysql"
-  engine_version       = "8.0.35" # Choose an appropriate version
+  engine_version       = "8.4.6" # Choose an appropriate version
   instance_class       = "db.t3.micro" # Or a larger instance type
   db_name              = "catalogdb"
   username             = "cataloguser"
