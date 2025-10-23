@@ -186,7 +186,7 @@ resource "aws_iam_role_policy_attachment" "ec2_container_registry_read_only" {
 resource "aws_eks_cluster" "innovatemart_eks_cluster" {
   name     = var.cluster_name
   role_arn = aws_iam_role.eks_cluster_role.arn
-  version  = "1.29" # Or your preferred EKS version
+  version  = "1.29" # Updated to 1.29 as discussed
 
   vpc_config {
     subnet_ids         = concat(aws_subnet.innovatemart_public_subnet[*].id, aws_subnet.innovatemart_private_subnet[*].id)
@@ -229,4 +229,113 @@ resource "aws_eks_node_group" "innovatemart_node_group" {
     aws_iam_role_policy_attachment.eks_cni_policy,
     aws_iam_role_policy_attachment.ec2_container_registry_read_only,
   ]
+}
+
+# -----------------------------------------------------------------------------
+# RDS for PostgreSQL (Orders Service)
+# -----------------------------------------------------------------------------
+resource "aws_db_instance" "orders_db" {
+  allocated_storage    = 20
+  engine               = "postgres"
+  engine_version       = "15.5" # Choose an appropriate version
+  instance_class       = "db.t3.micro" # Or a larger instance type
+  db_name              = "ordersdb"
+  username             = "ordersuser"
+  password             = "YOUR_ORDERS_DB_PASSWORD" # REPLACE THIS WITH A SECURE PASSWORD!
+  port                 = 5432
+  publicly_accessible  = false
+  multi_az             = false
+  skip_final_snapshot  = true
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
+  db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
+
+  tags = {
+    Name = "${var.cluster_name}-orders-db"
+  }
+}
+
+# -----------------------------------------------------------------------------
+# RDS for MySQL (Catalog Service)
+# -----------------------------------------------------------------------------
+resource "aws_db_instance" "catalog_db" {
+  allocated_storage    = 20
+  engine               = "mysql"
+  engine_version       = "8.0.35" # Choose an appropriate version
+  instance_class       = "db.t3.micro" # Or a larger instance type
+  db_name              = "catalogdb"
+  username             = "cataloguser"
+  password             = "YOUR_CATALOG_DB_PASSWORD" # REPLACE THIS WITH A SECURE PASSWORD!
+  port                 = 3306
+  publicly_accessible  = false
+  multi_az             = false
+  skip_final_snapshot  = true
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
+  db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
+
+  tags = {
+    Name = "${var.cluster_name}-catalog-db"
+  }
+}
+
+# -----------------------------------------------------------------------------
+# DynamoDB Table (Cart Service)
+# -----------------------------------------------------------------------------
+resource "aws_dynamodb_table" "cart_table" {
+  name           = "${var.cluster_name}-cart-table"
+  billing_mode   = "PROVISIONED"
+  read_capacity  = 5
+  write_capacity = 5
+  hash_key       = "id"
+
+  attribute {
+    name = "id"
+    type = "S"
+  }
+
+  tags = {
+    Name = "${var.cluster_name}-cart-table"
+  }
+}
+
+# -----------------------------------------------------------------------------
+# DB Subnet Group and Security Group for RDS
+# -----------------------------------------------------------------------------
+resource "aws_db_subnet_group" "db_subnet_group" {
+  name       = "${var.cluster_name}-db-subnet-group"
+  subnet_ids = aws_subnet.innovatemart_private_subnet[*].id # Use private subnets for RDS
+
+  tags = {
+    Name = "${var.cluster_name}-db-subnet-group"
+  }
+}
+
+resource "aws_security_group" "db_sg" {
+  name        = "${var.cluster_name}-db-sg"
+  description = "Allow inbound traffic to RDS instances from EKS nodes"
+  vpc_id      = aws_vpc.innovatemart_vpc.id
+
+  ingress {
+    from_port   = 5432 # PostgreSQL
+    to_port     = 5432
+    protocol    = "tcp"
+    security_groups = [aws_eks_cluster.innovatemart_eks_cluster.vpc_config[0].cluster_security_group_id] # From EKS Cluster SG
+  }
+
+  ingress {
+    from_port   = 3306 # MySQL
+    to_port     = 3306
+    protocol    = "tcp"
+    security_groups = [aws_eks_cluster.innovatemart_eks_cluster.vpc_config[0].cluster_security_group_id] # From EKS Cluster SG
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.cluster_name}-db-sg"
+  }
 }
