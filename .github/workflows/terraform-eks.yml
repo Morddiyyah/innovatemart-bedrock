@@ -1,0 +1,49 @@
+    name: Terraform EKS Infrastructure
+
+    on:
+      push:
+        branches:
+          - main
+      pull_request:
+        branches:
+          - main
+
+    env:
+      TF_WORKING_DIR: ./terraform/eks # Path to your Terraform configuration
+
+    jobs:
+      terraform:
+        name: "Terraform"
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+
+          - name: Setup Terraform
+            uses: hashicorp/setup-terraform@v3
+            with:
+              terraform_version: 1.x.x # Use a specific version, e.g., 1.7.5
+
+          - name: Configure AWS Credentials
+            uses: aws-actions/configure-aws-credentials@v4
+            with:
+              aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+              aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+              aws-region: ${{ secrets.AWS_REGION }} # Use the secret for region
+
+          - name: Terraform Init
+            id: init
+            run: terraform init -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" -backend-config="key=innovatemart/eks.tfstate" -backend-config="region=${{ secrets.AWS_REGION }}"
+            working-directory: ${{ env.TF_WORKING_DIR }}
+
+          - name: Terraform Plan
+            id: plan
+            if: github.event_name == 'pull_request'
+            run: terraform plan -no-color
+            working-directory: ${{ env.TF_WORKING_DIR }}
+            continue-on-error: true # Allow plan to fail if there are errors, still show output
+
+          - name: Terraform Apply
+            if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+            run: terraform apply -auto-approve
+            working-directory: ${{ env.TF_WORKING_DIR }}
