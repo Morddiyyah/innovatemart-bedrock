@@ -7,7 +7,7 @@ The intended public access via AWS Application Load Balancer is currently experi
 
     **Temporary Local Access (kubectl port-forward):**
     i can access the `ui` application locally for demonstration and testing purposes.
-Attached below are images to prove it worked
+Attached below are images to prove it workedd
 
 ![Alt text](https://github.com/Morddiyyah/innovatemart-bedrock/blob/bbf78c69ee64986546510fd57c559a47d4fa63ee/Screenshot%202025-10-24%20045341.png)
 
