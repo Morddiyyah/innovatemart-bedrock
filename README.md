@@ -101,7 +101,6 @@ Get the External IP/Hostname of the UI service: bash command kubectl get svc ui 
 
 Open in Browser: Copy the EXTERNAL-IP and paste it into your web browser.
 
-http://a6759d284b95a4363a26352cfe065e05-872272330.eu-west-2.elb.amazonaws.com/
 
 Developer Access Instructions
 
