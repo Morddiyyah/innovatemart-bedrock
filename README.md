@@ -11,12 +11,16 @@ Attached below are images to prove it worked
 
 ![Alt text](https://github.com/Morddiyyah/innovatemart-bedrock/blob/bbf78c69ee64986546510fd57c559a47d4fa63ee/Screenshot%202025-10-24%20045341.png)
 
-![Alt text]()
-Git Repository Link: [https://github.com/Darkchild123/innovatemart-bedrock.git] Deployment & Architecture Guide: This README serves as a comprehensive guide. * Architecture Overview: (Describe the microservices architecture, how services communicate, and the EKS components used). * Application Access: Refer to the "Accessing the Application" section above. * Developer Credentials: Refer to the "Developer Access Instructions" section above.
+
+Git Repository Link: https://github.com/Morddiyyah/innovatemart-bedrock.git Deployment & Architecture Guide: This README serves as a comprehensive guide. * Architecture Overview: (Describe the microservices architecture, how services communicate, and the EKS components used). * Application Access: Refer to the "Accessing the Application" section above. * Developer Credentials: Refer to the "Developer Access Instructions" section above.
 
 Overview
-
-Screenshot 2025-10-06 144630
+ EKS cluster with Terraform
+- Microservices architecture
+- AWS Load Balancer Controller (configuration attempted)
+- IAM roles and policies
+![Alt text](https://github.com/Morddiyyah/innovatemart-bedrock/blob/6516665191438f1d5e2197f5d27102cf44cf9687/Screenshot%202025-10-24%20050036.png)
+![Alt text](https://github.com/Morddiyyah/innovatemart-bedrock/blob/6516665191438f1d5e2197f5d27102cf44cf9687/Screenshot%202025-10-24%20050112.png)
 
 File structure
 
