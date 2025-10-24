@@ -9,7 +9,8 @@ The intended public access via AWS Application Load Balancer is currently experi
     i can access the `ui` application locally for demonstration and testing purposes.
 Attached below are images to prove it worked
 
-![Alt text]()
+![Alt text](https://github.com/Morddiyyah/innovatemart-bedrock/blob/bbf78c69ee64986546510fd57c559a47d4fa63ee/Screenshot%202025-10-24%20045341.png)
+
 ![Alt text]()
 Git Repository Link: [https://github.com/Darkchild123/innovatemart-bedrock.git] Deployment & Architecture Guide: This README serves as a comprehensive guide. * Architecture Overview: (Describe the microservices architecture, how services communicate, and the EKS components used). * Application Access: Refer to the "Accessing the Application" section above. * Developer Credentials: Refer to the "Developer Access Instructions" section above.
 
