@@ -1,0 +1,22 @@
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: innovatemart-ui-ingress
+      namespace: default # Assuming your UI service is in the default namespace
+      annotations:
+        kubernetes.io/ingress.class: alb
+        alb.ingress.kubernetes.io/scheme: internet-facing # Creates an internet-facing ALB
+        alb.ingress.kubernetes.io/target-type: ip        # Targets pods directly by IP
+        alb.ingress.kubernetes.io/load-balancer-name: innovatemart-ui-alb # Custom name for the ALB
+        # No 'listen-ports' or 'certificate-arn' annotations for HTTP
+    spec:
+      rules:
+        - http:
+            paths:
+              - path: /
+                pathType: Prefix
+                backend:
+                  service:
+                    name: ui # The Kubernetes Service name for your UI microservice
+                    port:
+                      number: 80 # The port your UI service listens on internally in Kubernetes

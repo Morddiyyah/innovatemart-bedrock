@@ -1,127 +1,127 @@
-# Default values for catalog.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+    # Default values for catalog.
+    # This is a YAML-formatted file.
+    # Declare variables to be passed into your templates.
 
-replicaCount: 1
+    replicaCount: 1
 
-image:
-  repository: public.ecr.aws/aws-containers/retail-store-sample-catalog
-  pullPolicy: IfNotPresent
-  tag: 
+    image:
+      repository: public.ecr.aws/aws-containers/retail-store-sample-catalog
+      pullPolicy: IfNotPresent
+      tag:
 
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+    imagePullSecrets: []
+    nameOverride: ""
+    fullnameOverride: ""
 
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
-
-podAnnotations: {}
-
-podSecurityContext:
-  fsGroup: 1000
-
-securityContext:
-  capabilities:
-    drop:
-      - ALL
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  runAsUser: 1000
-
-service:
-  type: ClusterIP
-  port: 80
-
-resources:
-  limits:
-    memory: 256Mi
-  requests:
-    cpu: 256m
-    memory: 256Mi
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-topologySpreadConstraints: []
-
-metrics:
-  enabled: true
-  podAnnotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "8080"
-    prometheus.io/path: "/metrics"
-
-configMap:
-  create: true
-  name:
-
-app:
-  persistence:
-    provider: in-memory
-    endpoint: ""
-    database: "catalog"
-
-    secret:
+    serviceAccount:
+      # Specifies whether a service account should be created
       create: true
-      name: catalog-db
-      username: catalog
-      password: ""
+      # Annotations to add to the service account
+      annotations: {}
+      # The name of the service account to use.
+      # If not set and create is true, a name is generated using the fullname template
+      name: ""
 
-mysql:
-  create: false
+    podAnnotations: {}
 
-  image:
-    repository: public.ecr.aws/docker/library/mysql
-    pullPolicy: IfNotPresent
-    tag: "8.0"
+    podSecurityContext:
+      fsGroup: 1000
 
-  service:
-    type: ClusterIP
-    port: 3306
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 1000
 
-  podAnnotations: {}
+    service:
+      type: ClusterIP
+      port: 80
 
-  nodeSelector: {}
+    resources:
+      limits:
+        memory: 256Mi
+      requests:
+        cpu: 256m
+        memory: 256Mi
 
-  tolerations: []
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 80
+      # targetMemoryUtilizationPercentage: 80
 
-  affinity: {}
+    nodeSelector: {}
 
-  persistentVolume:
-    enabled: false
-    annotations: {}
-    labels: {}
-    accessModes:
-      - ReadWriteOnce
-    size: 10Gi
-    storageClass: ""
+    tolerations: []
 
-securityGroups:
-  create: false
-  securityGroupIds: []
+    affinity: {}
 
-opentelemetry:
-  enabled: false
-  instrumentation: ""
+    topologySpreadConstraints: []
 
-podDisruptionBudget:
-  enabled: false
-  minAvailable: 2
-  maxUnavailable: 1
+    metrics:
+      enabled: true
+      podAnnotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+
+    configMap:
+      create: true
+      name:
+
+    app: # This must start at column 1
+      persistence:
+        provider: 'mysql' # CHANGE: Specify MySQL as the provider
+        endpoint: 'terraform-20251023171028514200000002.c72mqyku0jgj.us-east-2.rds.amazonaws.com' # CHANGE: Your Catalog DB Endpoint
+        database: 'catalogdb' # CHANGE: The database name in RDS
+        username: 'cataloguser' # CHANGE: The username for RDS
+        secret:
+          create: false # CHANGE: Set to false as we are manually managing the secret
+          name: catalog-db-secret # Ensure this matches your manually created Secret name
+          username: ""
+          password: ""
+
+    mysql: # This must start at column 1
+      create: false # Ensure this is false to prevent in-cluster MySQL
+
+      image:
+        repository: public.ecr.aws/docker/library/mysql
+        pullPolicy: IfNotPresent
+        tag: "8.0"
+
+      service:
+        type: ClusterIP
+        port: 3306
+
+      podAnnotations: {}
+
+      nodeSelector: {}
+
+      tolerations: []
+
+      affinity: {}
+
+      persistentVolume:
+        enabled: false
+        annotations: {}
+        labels: {}
+        accessModes:
+          - ReadWriteOnce
+        size: 10Gi
+        storageClass: ""
+
+    securityGroups: # This must start at column 1
+      create: false
+      securityGroupIds: []
+
+    opentelemetry: # This must start at column 1
+      enabled: false
+      instrumentation: ""
+
+    podDisruptionBudget: # This must start at column 1
+      enabled: false
+      minAvailable: 2
+      maxUnavailable: 1
